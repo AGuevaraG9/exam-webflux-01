@@ -1,11 +1,13 @@
 package com.taller_springflux.exame_webflux_01.service.impl;
 
+import com.taller_springflux.exame_webflux_01.exception.ProductNotFoundException;
 import com.taller_springflux.exame_webflux_01.model.Product;
 import com.taller_springflux.exame_webflux_01.repository.ProductRepository;
 import com.taller_springflux.exame_webflux_01.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +21,16 @@ public class ProductServiceImpl implements ProductService {
                     product.setName(product.getName().toUpperCase());
                     return product;
                 });
-        //42:43
+    }
+
+    @Override
+    public Mono<Product> getProductById(Long id) {
+        return productRepository.findById(id)
+                .map(product -> {
+                    product.setName(product.getName().toUpperCase());
+                    return product;
+                })
+                .switchIfEmpty(Mono.error(new ProductNotFoundException("Product with id: "+ id +" not found!")))
+                .flatMap(Mono::just);
     }
 }
