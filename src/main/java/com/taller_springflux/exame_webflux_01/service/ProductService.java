@@ -7,4 +7,5 @@ import reactor.core.publisher.Mono;
 public interface ProductService {
     Flux<Product> getAllProducts(Double minPrice);
     Mono<Product> getProductById(Long id);
+    Mono<Product> createProduct(Product product);
 }

@@ -33,4 +33,19 @@ public class ProductServiceImpl implements ProductService {
                 .switchIfEmpty(Mono.error(new ProductNotFoundException("Product with id: "+ id +" not found!")))
                 .flatMap(Mono::just);
     }
+
+    @Override
+    public Mono<Product> createProduct(Product product) {
+        if (product.getPrice() <= 0) {
+            return Mono.error(new ProductNotFoundException("The product must have a valid price"));
+        }
+        return Mono.just(product)
+                //Mono<T> o Flux<T>
+                .map(prod -> {
+                    prod.setName(prod.getName().toUpperCase());
+                    return prod;
+                })
+                //Mono<Publisher<T>> o Flux<Publisher<T>>
+                .flatMap(productRepository::save);
+    }
 }

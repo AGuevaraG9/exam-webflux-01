@@ -28,6 +28,11 @@ public class ProductController {
                 .map(ResponseEntity::ok);
     }
 
+    @PostMapping
+    public Mono<Product> CreateProduct(@RequestBody Product product){
+        return productService.createProduct(product);
+    }
+
     //Handler
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<ErrorResponse> handlerNotFoundException(ProductNotFoundException exception) {
