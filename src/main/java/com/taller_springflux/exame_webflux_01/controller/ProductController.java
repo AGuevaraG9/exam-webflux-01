@@ -29,8 +29,13 @@ public class ProductController {
     }
 
     @PostMapping
-    public Mono<Product> CreateProduct(@RequestBody Product product){
+    public Mono<Product> createProduct(@RequestBody Product product){
         return productService.createProduct(product);
+    }
+
+    @GetMapping("/delayed-message")
+    public Flux<String> delayMessages() {
+        return productService.delayMessage();
     }
 
     //Handler

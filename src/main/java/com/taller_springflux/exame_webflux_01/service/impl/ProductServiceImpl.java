@@ -5,12 +5,14 @@ import com.taller_springflux.exame_webflux_01.model.Product;
 import com.taller_springflux.exame_webflux_01.repository.ProductRepository;
 import com.taller_springflux.exame_webflux_01.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     @Override
@@ -47,5 +49,19 @@ public class ProductServiceImpl implements ProductService {
                 })
                 //Mono<Publisher<T>> o Flux<Publisher<T>>
                 .flatMap(productRepository::save);
+    }
+
+    @Override
+    public Flux<String> delayMessage() {
+        return Flux.concat(
+                Mono.just("Hello after 3 seconds")
+                        .delayElement(java.time.Duration.ofSeconds(3))
+                        .doOnSubscribe(sub -> log.info("Message 1 in process ..."))
+                        .doOnNext(message -> log.info("Emitting: {}", message)),
+                Mono.just("This is a second message")
+                        .delayElement(java.time.Duration.ofSeconds(2))
+                        .doOnSubscribe(sub -> log.info("Message 2 in process..."))
+                        .doOnNext(message -> log.info("Emitting: {}", message))
+        );
     }
 }

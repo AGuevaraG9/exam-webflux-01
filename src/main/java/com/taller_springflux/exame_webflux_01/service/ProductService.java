@@ -8,4 +8,5 @@ public interface ProductService {
     Flux<Product> getAllProducts(Double minPrice);
     Mono<Product> getProductById(Long id);
     Mono<Product> createProduct(Product product);
+    Flux<String> delayMessage();
 }
